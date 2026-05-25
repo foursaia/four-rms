@@ -1,0 +1,724 @@
+﻿RESTAURANT MANAGEMENT SYSTEM
+Product Requirements Document (PRD)
+
+Version
+1.0
+Date
+April 2025
+Status
+Draft
+Country
+Pakistan (PKR)
+
+
+1. Executive Summary
+This PRD defines the complete requirements for a Restaurant Management System (RMS) built for a single-branch restaurant offering both Fast Food and Casual Dining. The system covers the full customer journey from walk-in ordering to kitchen fulfilment, and extends to online ordering via website and an AI-powered voice agent for phone orders.
+
+The system is designed across six distinct user panels, each with its own interface, device, and access level: Customer Kiosk, Receptionist, Kitchen Display, Manager, CEO, and Delivery Boy. All panels are integrated in real time so that every order flows instantly from point of entry to the appropriate screens.
+
+2. Project Scope
+2.1 In Scope
+Walk-in customer self-service kiosk (Dine-In & Takeaway)
+Product catalog with categories, ingredients, and customisation (add/remove)
+Real-time order routing to Receptionist and Kitchen Display
+Receptionist panel: order management, table management, cash drawer, sales reports
+Kitchen Display System (KDS)
+Manager panel: operational reports, staff oversight
+CEO panel: business intelligence, downloadable invoices (custom date range)
+Delivery Boy panel: delivery order queue
+Website ordering (customer-facing online menu)
+AI Voice Agent for phone orders (Urdu language)
+Payment: cash and card both supported
+Platforms: Tablet (kiosk/kitchen), Desktop (receptionist/manager/CEO), Mobile (delivery boy)
+Multi-branch management
+Third-party aggregator integrations (Foodpanda, Careem, etc.)
+Inventory / stock management
+
+2.2 Out of Scope (v1.0)
+Loyalty / points program
+
+
+
+
+
+3. User Roles & Access
+Role
+Device
+Login Required
+Primary Purpose
+Customer Kiosk
+Tablet (in-restaurant)
+No
+Self-service ordering
+Receptionist
+Desktop / Tablet
+Yes (ID + Password)
+Order mgmt, cash, tables, sales
+Kitchen Display
+Tablet (kitchen wall)
+Yes
+View & manage incoming orders
+Manager
+Desktop / Tablet
+Yes
+Reports, staff oversight
+CEO
+Desktop / Mobile
+Yes
+BI dashboards, invoice downloads
+Delivery Boy
+Mobile
+Yes
+View assigned delivery orders
+
+
+4. Customer Kiosk Panel
+4.1 Entry Screen
+The first screen a walk-in customer sees is a full-screen landing page with two large, clearly labelled buttons:
+Dine In
+Takeaway
+Selecting either option routes the customer to the ordering flow with the corresponding order type tagged to their session.
+
+4.2 Menu & Category Navigation
+The ordering screen has a two-panel layout:
+Left vertical sidebar: category tiles, each showing the category image and name (e.g., Burgers, Wraps, Drinks, Desserts). Tapping a category filters the right panel.
+Right content area: product grid showing all items in the selected category. Each card shows the product image, name, and price in PKR.
+
+4.3 Product Detail & Customisation
+Tapping a product opens a dedicated detail screen showing:
+Product name, image, and description
+Ingredients listed as toggle buttons — defaults are pre-selected
+Removable defaults: customer can deselect any default ingredient (e.g., remove Mushrooms)
+Add-ons: customer can add optional ingredients not included by default (e.g., add Jalapenos)
+Quantity selector
+Add to Order button
+
+4.4 Beverage Selection
+After the customer taps Proceed from the product detail screen, a beverage selection screen appears. The customer selects their preferred beverage (or skips) before confirming the full order.
+
+4.5 Order Confirmation
+The order summary screen shows all items, customisations, and the total amount in PKR. The customer taps Confirm Order to submit. Upon confirmation, the screen displays:
+Order number (auto-generated, sequential per day)
+Estimated wait time
+Payment instructions (cash: proceed to counter; card: tap/insert on kiosk terminal)
+
+4.6 Payment
+Cash: customer is directed to pay at the counter; the order is flagged as 'Pending Payment' on the Receptionist screen.
+Card: customer pays on the kiosk-integrated card terminal; order status updates to 'Paid' automatically.
+
+
+5. Receptionist Panel
+5.1 Login & Shift Opening
+Each receptionist logs in with their unique staff ID and password. On first login of the day, a mandatory Cash Drawer Opening screen appears:
+Field: Opening float amount (PKR)
+The entered amount is recorded as the starting balance for that shift
+This data feeds into the end-of-day cash reconciliation report
+
+5.2 Live Order Queue
+All incoming orders appear in real time: walk-in kiosk orders, website orders, and voice agent orders
+Each order card shows: order number, type (Dine-In / Takeaway / Delivery), items summary, total, payment status, and timestamp
+Receptionist can accept, modify, or cancel an order
+Orders flagged as 'Pending Payment' (cash) can be marked paid after collection
+
+5.3 Table Management
+Visual floor map showing all tables with status: Available, Occupied, Reserved
+Receptionist can assign an incoming Dine-In order to a specific table
+Table status updates automatically when an order is assigned or closed
+Receptionist can add or remove tables from the floor map (admin action)
+
+5.4 Manual Order Entry
+Receptionist can manually enter orders on behalf of customers (for phone-in or walk-up-to-counter scenarios not using the kiosk).
+
+5.5 Sales Dashboard
+A real-time counter on the receptionist home screen shows today's numbers:
+Total Dine-In orders and revenue
+Total Takeaway orders and revenue
+Total Online (website) orders and revenue
+Total Voice Agent orders and revenue
+Grand total revenue for the day
+
+5.6 Cash Drawer
+View current drawer balance at any time
+Record cash-in / cash-out transactions with reason notes
+End-of-shift: enter closing float, system calculates expected vs. actual difference
+
+
+6. Kitchen Display System (KDS)
+Wall-mounted tablet in the kitchen, always-on display
+Shows all active orders in real time regardless of source (kiosk, website, voice agent)
+Each order card displays: order number, type, item list with customisations highlighted, and time elapsed since order was placed
+Kitchen staff can mark individual items or entire orders as Ready
+When an order is marked Ready, the receptionist panel is notified so the customer can be called
+Orders are sorted by time received (oldest first)
+Optional audio alert for new incoming orders
+
+
+7. Online Ordering — Website
+7.1 Customer-Facing Website
+Responsive web interface (mobile + desktop)
+Same menu structure as the kiosk: categories on the left, products on the right
+Product detail page with ingredient customisation (add/remove)
+Beverage selection step
+Customer fills in: Name, WhatsApp number, Delivery address
+Order confirmation page showing order number and estimated delivery time
+Payment: Cash on Delivery only for v1.0 (card online can be added later)
+
+7.2 Order Routing
+Website orders are pushed in real time to: Receptionist panel (full order details) and Kitchen Display (items only)
+The same order is also pushed to the Delivery Boy panel
+
+
+8. AI Voice Agent (Phone Orders)
+8.1 Overview
+Customers can place orders by calling the restaurant. An AI voice agent handles the call end-to-end in Urdu. The agent is responsible for:
+Greeting the caller
+Presenting menu categories and items verbally
+Taking item selections and customisations
+Confirming the order back to the customer
+Collecting customer information: Full name, WhatsApp number, Delivery address
+
+8.2 Order Routing
+Voice agent orders are pushed to: Receptionist panel (full order + customer info), Kitchen Display (items only), and Delivery Boy panel (delivery orders only)
+A 'Voice Order' badge appears on the order card so staff can differentiate the source
+
+8.3 Language
+The voice agent operates entirely in Urdu. All prompts, confirmations, and error handling are in Urdu.
+
+
+9. Delivery Boy Panel
+Mobile-optimised interface, login required
+Shows only delivery orders (from website and voice agent); walk-in / dine-in / takeaway orders are not visible
+Each order card shows: order number, customer name, WhatsApp number, delivery address, items ordered, and total amount
+Delivery boy can update order status: Out for Delivery, Delivered
+Delivered status triggers an update on the Receptionist panel
+No access to sales data, other orders, or any administrative functionality
+
+
+10. Manager Panel
+10.1 Dashboard
+Real-time snapshot: total orders today, revenue by order type, orders pending, orders completed
+Live kitchen queue visibility (read-only)
+
+10.2 Sales Reports
+Custom date range selector: today, yesterday, this week, last week, this month, last month, or fully custom range
+Breakdown by order type: Dine-In, Takeaway, Online, Voice Agent
+Revenue totals, order count, average order value
+Visual graphs (bar chart, line chart) alongside tabular data
+Export to PDF or Excel
+
+10.3 Staff Management
+View all staff accounts: Receptionist, Kitchen, Delivery Boy
+Create, edit, or deactivate staff accounts
+View shift logs and cash drawer opening/closing history per staff member
+
+10.4 Menu Management
+Add, edit, or remove menu categories and products
+Set product availability (available / out of stock / hidden)
+Manage ingredients: add default ingredients, mark as removable or add-on
+Update prices in PKR
+
+
+11. CEO Panel
+11.1 Business Intelligence Dashboard
+Full revenue overview with interactive graphs: daily, weekly, monthly, yearly
+Order volume trends over time
+Revenue breakdown by order source (Kiosk, Website, Voice Agent)
+Average order value, peak hours heatmap, best-selling items
+All graphs are visually professional with clear labels, legends, and tooltips
+
+11.2 Invoice & Report Downloads
+Fully flexible custom date range invoice/report system:
+Preset ranges: Today, Yesterday, This Week, Last Week, This Month, Last Month, Last 3 Months, Last 6 Months, This Year, Last Year
+Custom range: select any start date and end date
+Custom hours: select a specific date and define start time to end time
+Invoice PDF includes: restaurant name/logo, date range, itemised revenue, order counts by type, taxes (if applicable), grand total
+Download format: PDF (professional layout, ready to print or share)
+Optional Excel export for raw data
+
+11.3 Access Control
+CEO has read-only access to all panels' data. CEO cannot modify orders, menus, or staff accounts. CEO can only view and download reports.
+
+
+12. Payment System
+Order Source
+Cash
+Card
+Notes
+Walk-in Kiosk
+Yes (at counter)
+Yes (kiosk terminal)
+Card: automated; Cash: receptionist confirms
+Website
+Cash on Delivery
+Phase 2
+COD collected by delivery boy
+Voice Agent
+Cash on Delivery
+Phase 2
+COD collected by delivery boy
+
+
+13. Non-Functional Requirements
+13.1 Performance
+Order routing from any source to Receptionist and Kitchen Display: under 2 seconds
+Kiosk screen load time: under 1.5 seconds per page
+Dashboard and reports: under 3 seconds for any date range under 1 year
+
+13.2 Availability
+System must operate fully offline (local network) if internet goes down — walk-in kiosk and kitchen display must always work
+Online orders (website, voice agent) require internet and will queue when connectivity is restored
+
+13.3 Security
+All staff logins protected with hashed passwords
+Role-based access control — each role sees only what it needs
+All financial data encrypted at rest
+CEO and Manager panels require 2-step login (password + PIN) — recommended
+
+13.4 Usability
+Kiosk UI: large touch targets, high-contrast visuals, minimal text — designed for all age groups
+Kitchen Display: high-contrast, large font, readable from 2 metres away
+All admin panels: responsive for both desktop and tablet
+Delivery Boy panel: fully mobile-optimised
+
+
+14. Suggested Technical Architecture
+14.1 Frontend
+Kiosk & Admin Panels: React.js (PWA — Progressive Web App, installable on tablets)
+Website: Next.js (SEO-friendly, fast)
+Mobile (Delivery Boy): React Native or Flutter
+
+14.2 Backend
+Node.js with Express or NestJS
+WebSockets (Socket.io) for real-time order push to all panels
+REST API for all CRUD operations
+
+14.3 Database
+PostgreSQL — primary relational database for orders, products, staff, sales
+Redis — session management and real-time order queue
+
+14.4 Voice Agent
+Twilio for phone call handling
+Anthropic Claude API or OpenAI with Urdu language model for conversation
+Order data POSTed to backend API upon call completion
+
+14.5 Infrastructure
+Hosted on a local server within the restaurant (for offline resilience) with cloud sync for CEO reports
+Alternatively: cloud (AWS / DigitalOcean) with offline fallback on local device
+
+
+14.6 Printer Integration
+Thermal receipt printer at the counter for customer receipts (order number, items, total, payment method)
+Kitchen Order Ticket (KOT) printer in the kitchen — triggers automatically when an order is confirmed
+KOT includes: order number, type (Dine-In/Takeaway/Delivery), table number if applicable, all items with customisations, timestamp
+Compatible with standard ESC/POS thermal printers (e.g., Epson TM series)
+
+
+15. Upgrades & Advanced Features
+15.1 Customer Feedback System
+After an order is delivered or completed, an automated WhatsApp message is sent to the customer's registered number asking for a rating.
+Rating scale: 1 to 5 stars, collected via WhatsApp reply or a short link
+Optional comment field for written feedback
+Feedback data is aggregated in the Manager and CEO panels
+Reports show: overall rating trend, per-item complaint frequency, lowest-rated items, and busiest complaint periods
+Manager receives an alert when any item receives 3 or more consecutive low ratings
+
+15.2 WhatsApp / SMS Order Notifications
+Automated WhatsApp messages are sent to customers at key order milestones:
+Order Confirmed: message includes order number, items ordered, and estimated time
+Order Ready (for takeaway/dine-in): customer is notified to collect or that food is being served
+Out for Delivery: delivery boy name and estimated arrival time
+Delivered: confirmation message with a feedback request link
+All messages are sent in Urdu and use the WhatsApp Business API
+
+15.3 Refund & Cancellation Management
+Any order can be cancelled by the Receptionist or Manager before it is marked as Ready in the kitchen
+Cancellation requires a mandatory reason selection (e.g., Customer Request, Item Unavailable, Duplicate Order, Other)
+For card-paid orders, a refund is logged and processed back to the card; for cash, a cash refund record is created
+Cancelled and refunded orders are deducted from sales totals in all reports — net revenue is shown alongside gross
+CEO and Manager panels show a Cancellations & Refunds section with count, total value refunded, and top reasons
+
+15.4 Staff Performance Reports
+Available in the Manager panel, with a summary view in the CEO panel:
+Per-receptionist metrics: total orders processed per shift, orders modified after placement, average order processing time, cancellations initiated
+Per-shift summary: opening float vs. closing float, cash difference, total card transactions
+Sortable by date range (same custom range selector as sales reports)
+Export to PDF or Excel
+
+15.5 Kitchen Item Availability Toggle
+Kitchen Display has a quick-access Out of Stock button next to each menu item
+When toggled, the item is immediately greyed out and marked unavailable on the kiosk, website, and voice agent menu
+Receptionist and Manager are notified of the change with a banner alert
+Kitchen can restore availability with a single tap
+Manager retains full control and can override from the Manager panel
+
+15.6 Order Modification Window
+After an order is confirmed, a 2-minute modification window is active
+During this window, the Receptionist can edit items, quantities, or customisations without cancelling the order
+After the window closes and the KOT is sent to the kitchen, modifications require Manager approval
+All modifications are logged with timestamp, staff ID, and reason for audit purposes
+
+15.7 Dynamic Estimated Delivery / Wait Time
+System calculates estimated time based on current kitchen queue length and average preparation time per item type
+Displayed to the customer at order confirmation (kiosk screen, website, WhatsApp notification)
+Algorithm: base prep time + (number of active kitchen orders x average time per order)
+Kitchen can manually override the estimated time if needed (e.g., staff shortage)
+Delivery time additionally factors in a configurable delivery radius estimate
+
+15.8 Peak Hours Auto-Staffing Alerts
+System monitors incoming order volume in real time
+If order volume exceeds a configurable threshold within a rolling 15-minute window, an alert is pushed to the Manager panel and Manager's mobile
+Alert message example: 'High volume alert — 18 orders in last 15 minutes. Consider adding counter staff.'
+Threshold is configurable by the Manager (e.g., trigger alert if more than 15 orders in 15 minutes)
+CEO panel shows historical peak hour heatmap so staffing can be planned proactively
+
+15.9 Multi-Branch Ready Architecture
+While v1.0 covers a single branch, the system will be architected from day one to support multi-branch expansion:
+All data is tagged with a branch_id at the database level
+CEO panel will have a branch switcher in Phase 2 to view per-branch or consolidated reports
+Staff accounts are tied to a branch; a Manager can only see their branch unless granted multi-branch access by the CEO
+Menu can be shared across branches or customised per branch
+No additional development cost for single-branch v1.0 — just a future-proof data model
+
+15.10 Inventory & Stock Management
+To be implemented in Phase 2 as a separate module:
+Each menu item is linked to ingredients with configurable stock quantities
+When an order is placed, ingredient quantities are automatically decremented
+Low stock alert: Manager and Kitchen receive a notification when any ingredient falls below a set threshold
+Daily stock summary report available in the Manager panel
+Manual stock adjustment (for deliveries received, wastage, etc.) with reason logging
+CEO panel shows ingredient cost trends over time to identify wastage patterns
+
+15.11 QR Code Table Ordering
+An alternative ordering channel for dine-in customers — no kiosk interaction required:
+Each table has a unique printed QR code
+Customer scans with their phone and is taken to the mobile-optimised menu website
+Order flow is identical to the website: category browse, product detail, customisation, beverage selection, confirmation
+Table number is auto-captured from the QR code — customer does not need to enter it
+Orders appear on the Receptionist and Kitchen panels tagged as 'QR Table Order' with the table number
+QR codes are generated and printed from the Manager panel
+
+15.12 Pre-Ordering & Order Scheduling
+Available on the website and potentially via the voice agent:
+Customer can select a future date and time for their order (e.g., 'Deliver tomorrow at 1:00 PM')
+Scheduled orders are stored and automatically pushed to the Receptionist and Kitchen panels 30 minutes before the scheduled time
+Manager panel shows a Scheduled Orders section with upcoming pre-orders for the day
+Customer receives a WhatsApp confirmation at time of scheduling and a reminder 1 hour before the order is due
+CEO panel tracks pre-order volume as a separate metric
+
+15.13 Order Bumper / Caller Display
+A large secondary display screen installed in the customer waiting area or near the counter:
+When kitchen marks an order as Ready, the order number flashes on the caller display with an audio beep alert
+Display shows two columns: 'Preparing' (orders in progress) and 'Ready for Collection'
+Order numbers auto-clear from the Ready list after 3 minutes or when receptionist marks as collected
+Compatible with any HDMI-connected display (TV or monitor) — no special hardware required
+Mimics the McDonald's / KFC style token calling experience for a professional feel
+
+15.14 Shift Management & Scheduling
+Available in the Manager panel:
+Manager creates a weekly staff schedule — assigns each staff member to a shift with start and end times
+Staff receive their schedule via WhatsApp notification at the start of each week
+System tracks actual login times vs. scheduled times — late arrivals and absences are flagged automatically
+Overtime calculation: if a staff member works beyond their scheduled end time, overtime hours are recorded
+Monthly attendance and overtime report available for download in PDF or Excel
+CEO panel shows total labour hours per week as a metric alongside revenue
+
+15.15 Salary Management
+Available in the Manager panel with full visibility in the CEO panel. The salary module handles calculation, customisation, and record-keeping for all staff members.
+Salary Structure Configuration
+Each staff member has an individual salary profile with one of three structures: Fixed Monthly Salary, Hourly Rate (total hours worked x rate), or Fixed + Overtime (base monthly salary with separate overtime rate per hour)
+Manager can assign or change any staff member's salary structure at any time
+Overtime rate is separately configurable per staff member (e.g., 1.5x or 2x the hourly rate)
+All salary structure changes are logged with timestamp, changed-by (Manager name), and old vs. new values
+CEO receives an instant WhatsApp notification whenever Manager makes any salary structure change — including what was changed, for which staff member, and the before/after values
+
+Salary Calculation
+At the end of each month, the system automatically calculates salary for every staff member based on their assigned structure
+Fixed salary staff: base salary is pulled directly; any approved deductions (absences, late arrivals) are subtracted
+Hourly staff: total login hours for the month are pulled from attendance records and multiplied by their hourly rate
+Overtime staff: base salary + (total overtime hours x overtime rate) is calculated automatically using shift schedule data
+Deductions are configurable: per absent day deduction amount, per late arrival deduction (optional, Manager sets the rules)
+Advances (if any given during the month) can be recorded and are automatically deducted from the final salary
+
+Salary Review & Approval
+At month end, Manager reviews the auto-calculated salary sheet for all staff before it is finalised
+Manager can make manual adjustments with a mandatory reason note (e.g., bonus, penalty, advance deduction)
+Every manual adjustment is flagged and visible to the CEO in their panel with the reason provided
+Once Manager approves the salary sheet, CEO receives a WhatsApp notification with a summary: total payroll amount, number of staff paid, any manual adjustments made
+CEO can review and if needed, flag any adjustment for discussion — no payment is blocked by the system but the flag is recorded
+
+Payment Recording
+Since payment is done manually (cash in hand, bank transfer, or card), the system records the payment method and date for each staff member
+Payment methods per staff member: Cash, Bank Transfer, or Card — configurable individually
+Once salary is marked as Paid by the Manager, a salary slip is auto-generated for that staff member
+Salary slip includes: staff name, designation, month, basic salary, overtime (if any), deductions, advances deducted, net payable amount, payment method, and payment date
+Salary slip is sent automatically to the staff member's WhatsApp number (via N8n)
+
+Salary Reports & History
+Manager panel: monthly payroll summary — all staff, their calculated salary, adjustments, and payment status
+CEO panel: full salary history for any custom date range — monthly totals, per-staff breakdown, total payroll cost vs. revenue ratio
+Downloadable payroll report in PDF and Excel — same custom date range selector as sales invoices
+CEO can see year-on-year payroll cost trends alongside revenue growth in the BI dashboard
+
+15.16 Customer Profile & Reorder
+For customers ordering via website or voice agent (identified by WhatsApp number):
+On returning visits, the system recognises the customer's number and greets them by name
+Website shows 'Your Recent Orders' section — customer can reorder any previous order in one tap
+Voice agent references the customer's last order: 'Pichli baar aapne Zinger Burger order kiya tha, dobara order karna chahte hain?'
+Customer profile stores: name, WhatsApp number, default delivery address, order history
+Manager panel shows returning customer rate as a metric — how many orders came from repeat customers vs. new
+
+15.17 Allergen & Dietary Filters
+Available on the kiosk, website, and QR table ordering:
+Each menu item is tagged with dietary attributes: Vegetarian, Contains Gluten, Contains Dairy, Contains Nuts, Spicy, Halal
+Filter bar at the top of the menu allows customers to filter by one or more attributes
+Items that do not match the active filter are greyed out, not removed — so customers can still see the full menu
+Product detail page shows all allergen tags clearly with icons
+Manager assigns allergen tags to each menu item from the Manager panel
+
+15.18 Expense Tracking
+Available in the Manager panel, with summary view in the CEO panel:
+Manager can log daily/monthly business expenses by category: Rent, Utilities, Staff Salaries, Raw Materials, Packaging, Maintenance, Other
+Each expense entry requires: date, category, amount (PKR), description, and optional receipt photo upload
+CEO panel displays a monthly Profit Overview: Total Revenue - Total Expenses = Net Profit, shown as a graph and a number
+Expenses are exportable in the same custom date range invoice system used for sales reports
+Budget vs. Actual view: Manager can set monthly budget targets per category and track spend against them
+
+15.19 Automated WhatsApp Marketing Broadcasts
+Available in the Manager panel:
+Manager can compose a promotional message (text + optional image) and broadcast it to all customers who have previously ordered via website or voice agent
+Audience filters available: all customers, customers who ordered in the last 30 days, customers who ordered a specific item, etc.
+Schedule broadcasts for a specific date and time (e.g., send Friday lunch promo at 11:30 AM every Friday)
+Broadcast history and delivery stats (sent, delivered, read) visible in the Manager panel
+Uses WhatsApp Business API — customers can reply and their message routes to the receptionist panel as a new inquiry
+Opt-out handling: customers who reply STOP are automatically removed from the broadcast list
+
+15.20 Google Reviews Integration
+Automated reputation management:
+When a customer submits a 4 or 5 star in-app rating (via the feedback system in 15.1), an automated WhatsApp follow-up is sent: 'Shukriya! Kya aap hamare Google page pe bhi review de sakte hain?' with a direct Google Review link
+Customers with 1, 2, or 3 star ratings do NOT receive the Google review request — instead, their negative feedback is escalated internally to the Manager
+Manager panel shows Google Review funnel: feedback collected, positive reviews requested, estimated Google reviews generated
+Google Review link is configurable from the Manager panel settings
+
+15.21 AI Menu Recommendations (Kiosk & Website)
+AI-powered upselling built into the ordering flow:
+When a customer adds an item to their order, the system displays: 'Is ke saath logon ne aksar yeh bhi order kiya' — showing 2-3 frequently paired items
+Recommendations are based on real order history data from the restaurant's own database (collaborative filtering)
+On the kiosk, recommendations appear as a non-intrusive overlay before the customer proceeds to checkout
+On the website, recommendations appear as a 'You May Also Like' row below the product detail
+Manager can manually pin specific items as recommendations for any product (e.g., always suggest Fries with any Burger)
+CEO panel tracks upsell conversion rate: how often recommended items are added to the order
+
+15.22 AI Demand Forecasting
+Powered by historical order data — available in the Manager and CEO panels:
+System analyses past order patterns (by day of week, time of day, season, weather if API available) to predict upcoming demand
+Weekly forecast shown every Monday: expected order volume and top items for each day of the upcoming week
+Staffing recommendation: 'Tuesday lunch peak expected — suggest 2 extra kitchen staff 12PM-3PM'
+Ingredient recommendation: 'Based on forecast, stock 40 extra burger buns for Saturday'
+Accuracy tracking: forecast vs. actual comparison shown after each week so the model improves over time
+Requires at least 4 weeks of historical data to activate — system notifies Manager when enough data is available
+
+
+16. Suggested Development Milestones
+Phase
+Name
+Deliverables
+1
+Core Kiosk + Kitchen
+Customer kiosk, KDS, basic Receptionist panel, KOT printer, Order Bumper display
+2
+Receptionist Full
+Table management, cash drawer, QR table ordering, order modification window, item availability toggle, allergen filters
+3
+Manager + CEO Panels
+Reports, staff performance, shift management, expense tracking, cancellations/refunds, peak hour alerts, invoice downloads
+4
+Website + Notifications
+Customer website, online ordering, customer profiles, WhatsApp notifications, dynamic ETA, pre-ordering, AI recommendations
+5
+Voice Agent
+AI voice agent in Urdu, phone order intake, customer profile recognition, routing, WhatsApp confirmations
+6
+Feedback + Marketing
+Customer feedback, Google Reviews integration, WhatsApp marketing broadcasts, demand forecasting
+7
+Inventory + Advanced
+Stock management module, low-stock alerts, P&L integration with expenses
+8
+QA & Launch
+Full system testing, staff training, multi-branch architecture validation, go-live
+
+
+17. N8n Automation Flows
+N8n is an open-source workflow automation platform that connects the restaurant system with external services (WhatsApp, Email, Google Sheets, etc.) without custom code. All automations below are implemented as N8n workflows triggered by backend API webhooks.
+
+17.1 Order Flow Automations
+Automation
+Trigger
+Action
+Recipients
+Order Confirmed Notification
+Order status = Confirmed
+WhatsApp: order number, items, ETA
+Customer
+Order Ready Notification
+Kitchen marks = Ready
+WhatsApp: your order is ready
+Customer (Dine-In/Takeaway)
+Out for Delivery Notification
+Delivery Boy = Out for Delivery
+WhatsApp: delivery boy name + ETA
+Customer
+Delivered Confirmation
+Delivery Boy = Delivered
+WhatsApp confirmation + feedback link
+Customer
+Voice Agent Order Bridge
+Voice call ends
+Parse order JSON, POST to backend, push to KDS
+Backend + Kitchen
+Website Order Routing
+New website order
+POST to backend, WebSocket push to panels
+Receptionist + Kitchen
+Pre-Order Release
+Scheduled time minus 30 min
+Push order to Receptionist + Kitchen + customer reminder
+Receptionist + Kitchen + Customer
+
+17.2 Reporting & Summary Automations
+Automation
+Trigger
+Action
+Recipients
+Daily Sales Report
+Cron: Every day 11:00 PM
+Generate summary, send WhatsApp + Email
+CEO + Manager
+Weekly Summary Report
+Cron: Every Sunday 10:00 PM
+Generate weekly PDF report, send Email
+CEO + Manager
+Monthly Invoice Generation
+Cron: Last day of month 11:30 PM
+Auto-generate PDF invoice, send Email
+CEO
+Google Sheets Daily Sync
+Cron: Every day 11:05 PM
+Push daily sales row to CEO Google Sheet
+CEO Google Sheet
+Demand Forecast Push
+Cron: Every Monday 8:00 AM
+Generate weekly forecast, send WhatsApp + Email
+Manager + CEO
+
+17.3 Alert Automations
+Automation
+Trigger
+Action
+Recipients
+Low Stock Alert
+Ingredient quantity < threshold
+WhatsApp: item name + current stock
+Manager + Kitchen
+Peak Hour Alert
+Orders > threshold in 15 min
+WhatsApp push with current order volume
+Manager
+Cash Discrepancy Alert
+Shift close: expected != actual
+WhatsApp: discrepancy amount + staff ID
+Manager + CEO
+Negative Feedback Alert
+Customer rating 1-3 stars
+WhatsApp: order details + comment
+Manager
+Item Out of Stock Alert
+Kitchen toggles = Out of Stock
+WhatsApp to Manager + update kiosk/website
+Manager
+Staff Late Arrival Alert
+Login > scheduled start + 10 min
+WhatsApp: staff name + scheduled vs actual
+Manager
+
+17.4 Marketing & Engagement Automations
+Automation
+Trigger
+Action
+Recipients
+Google Review Request
+Customer rating = 4 or 5 stars
+Wait 30 min, send WhatsApp with Google Review link
+Customer
+WhatsApp Marketing Broadcast
+Manager schedules broadcast
+Send bulk WhatsApp to filtered audience at scheduled time
+Customers (filtered)
+Win-Back Campaign
+No order in 30 days
+Send WhatsApp re-engagement message
+Inactive customers
+Opt-Out Handler
+Customer replies STOP
+Remove from all broadcast lists, log opt-out
+Customer list DB
+Shift Schedule Notification
+Manager publishes schedule
+Send each staff member their shift via WhatsApp
+All staff
+
+17.5 N8n Integration Map
+External services connected to N8n:
+Service
+N8n Node
+Used For
+WhatsApp Business API
+HTTP Request / Twilio node
+All customer and staff notifications
+Restaurant Backend API
+Webhook (inbound) + HTTP Request
+Trigger automations on order/status events
+Google Sheets
+Google Sheets node
+Daily sales sync for CEO
+Email (SMTP / Gmail)
+Email node
+Weekly reports, monthly invoices
+Twilio (Voice Agent)
+Twilio node
+Receive call completion webhook, parse order
+PDF Generator
+HTTP Request to PDF API
+Auto-generate invoice and report PDFs
+Google Reviews
+HTTP Request
+Deep link to restaurant Google Review page
+Cron Scheduler
+N8n built-in Cron node
+All time-based automations
+
+17.6 N8n Deployment Notes
+N8n is self-hosted on the same server as the restaurant backend — no additional cloud cost
+All workflows are version-controlled and exportable as JSON for backup
+N8n admin panel is accessible only to the system developer / IT admin
+Each workflow has error handling: if a WhatsApp message fails, N8n retries 3 times and logs the failure
+N8n webhook URLs are secured with a secret token — only the restaurant backend can trigger them
+Total estimated N8n workflows: 19 (as mapped in sections 17.1 to 17.4)
+
+
+18. Open Questions & Assumptions
+18.1 Assumptions Made
+Tax (GST/PST) — assumed not applicable for v1.0; can be added as a configurable setting
+Menu content (categories, products, ingredients, prices) to be provided by the restaurant before development begins
+Restaurant logo and branding assets to be provided for kiosk UI and invoice PDFs
+Internet connectivity is generally available; offline mode is a fallback for walk-in orders only
+Card payment terminal hardware (POS terminal) to be procured separately and integrated via its SDK
+
+18.2 Items to Confirm
+How many tables does the restaurant have, and does the floor map need a custom visual layout?
+Should the website support both Urdu and English, or English only?
+Does the voice agent need to handle modifications and customisations, or just basic item selection?
+Should CEO and Manager have separate login credentials, or is a shared admin account acceptable?
+Are there any third-party accounting tools (e.g., QuickBooks) that invoices need to export to?
+
+This document is a living PRD — it should be updated as requirements are refined during the design and development process.

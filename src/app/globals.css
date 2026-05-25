@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #050505;
+  --color-surface: #121212;
+  --color-surface-lighter: #1e1e1e;
+  --color-primary: #EAB308;
+  --color-primary-dark: #CA8A04;
+  --color-accent: #F97316;
+  --color-foreground: #F8F9FA;
+  --color-muted: #94A3B8;
+  --color-border: #262626;
+
+  --font-sans: 'Outfit', var(--font-geist-sans);
+  
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+:root {
+  --background: #050505;
+  --foreground: #F8F9FA;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Luxury Glassmorphism Utilities */
+@utility glass {
+  background: rgba(18, 18, 18, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@utility glass-lighter {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@utility text-gradient {
+  background: linear-gradient(to right, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbar for Premium Feel */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* Print Media Styles for Thermal Receipt Printing */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-family: 'Courier New', Courier, monospace !important;
+  }
+  
+  /* Hide all screen components */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Show only the thermal print area */
+  #thermal-print-area, #thermal-print-area * {
+    visibility: visible;
+  }
+  
+  #thermal-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 76mm;
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    color: black !important;
+  }
+  
+  @page {
+    margin: 0;
+    size: auto;
+  }
+}
+

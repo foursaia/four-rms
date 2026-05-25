@@ -1,0 +1,803 @@
+﻿
+RESTAURANT
+MANAGEMENT SYSTEM
+Complete Project Plan — v1.0
+Pakistan  |  PKR  |  April 2025
+Single-Branch Fast Food & Casual Dining
+
+Component
+Technology
+Cost
+Database + Auth + Realtime
+Supabase
+Free
+Web Deployment
+Vercel
+Free
+Domain
+Namecheap
+$12/yr
+DNS + SSL
+Cloudflare
+Free
+WhatsApp API
+360dialog
+~$5/month
+Automation (19 flows)
+N8n Self-hosted
+Free
+Error Tracking
+Sentry
+Free
+Frontend Analytics
+PostHog
+Free
+Redis Cache
+Upstash
+Free
+Version Control
+GitHub
+Free
+Estimated Monthly Cost: ~$5/month (WhatsApp API only)
+
+01
+Final Tech Stack
+Chosen tools, reasons, and what was replaced
+
+Core Infrastructure
+Service
+Role
+Cost
+Why This
+Supabase
+PostgreSQL DB + Auth + Realtime + Storage
+Free (500MB, 50k MAU)
+All-in-one: DB, auth.users, RLS, live subscriptions
+Vercel
+Next.js website + Admin PWA deployment
+Free (100GB bandwidth)
+Best DX for Next.js, auto-deploy from GitHub
+GitHub
+Version control + CI/CD
+Free
+Industry standard, integrates with Vercel
+Cloudflare
+DNS + SSL certificates + CDN
+Free
+Fastest DNS globally, free SSL, DDoS protection
+Namecheap
+Domain registration
+$12/year
+Cheapest reliable registrar; point NS to Cloudflare
+
+Communication — WhatsApp Only (No Email, No SMS)
+Pakistan mein WhatsApp hi default communication hai. Email aur SMS dono hata diye hain. 360dialog choose kiya Twilio ke upar kyunki ye direct Meta partner hai aur per-message rate kaafi kam hai.
+Service
+Role
+Cost
+Decision
+360dialog
+WhatsApp Business API — all notifications + marketing
+~$5/month flat
+SELECTED
+Resend
+Email service
+Free
+REMOVED — WhatsApp replaces this
+SMS Gateway
+SMS fallback
+Per-message (PKR)
+REMOVED — no need in Pakistan
+
+Automation
+Service
+Role
+Hosting
+Cost
+N8n
+19 automation workflows (PRD Section 17)
+Self-hosted on Railway free tier
+Free
+Upstash Redis
+Order queue cache, session management
+Cloud (Serverless)
+Free (10k commands/day)
+
+Monitoring & Analytics
+Service
+Role
+Cost
+Where to Use
+Sentry
+Error tracking — runtime crashes, API errors
+Free (5k errors/month)
+Backend + all panels
+PostHog
+Frontend funnel analytics — user behaviour
+Free (1M events/month)
+Kiosk + Website only
+
+Authentication — Supabase Auth Only
+Clerk remove kar diya. Supabase Auth already built-in hai aur schema mein auth.users se link hai. Kiosk customers unauthenticated hain. Staff 10-15 log hain. Clerk ka koi faida nahi tha sirf extra dependency thi.
+Payments — Pakistan-Specific
+Stripe Pakistan mein merchant accounts accept nahi karta. Pakistani businesses Stripe pe payout nahi le sakteen. Safepay ya HBL PayConnect use karna hoga Phase 2 mein.
+Option
+Type
+Status
+Notes
+Stripe
+International card processor
+REMOVED
+Pakistan merchants not supported
+Safepay (safepay.pk)
+Pakistani card + wallets
+RECOMMENDED Phase 2
+Stripe-like API, local support
+HBL PayConnect
+Bank gateway
+Alternative Phase 2
+Most restaurants use this
+Cash / COD
+Physical cash
+Phase 1 (default)
+All kiosk + delivery orders
+
+Deferred / Removed Services
+Service
+Original Plan
+Decision
+Reason
+Pinecone
+Vector DB for AI
+DEFERRED to Phase 5+
+Not needed now; recommendations use SQL-based collaborative filtering
+Clerk
+Authentication
+REMOVED
+Supabase Auth is sufficient and already integrated
+Stripe
+Payments
+REMOVED
+Pakistan merchant accounts not supported
+Resend
+Email
+REMOVED
+WhatsApp replaces all email notifications
+SMS
+Notifications
+REMOVED
+WhatsApp is universal in Pakistan; SMS is unreliable and costly
+
+02
+Supabase Database Schema
+30 tables, RLS policies, relationships, Realtime
+
+Table Groups Overview
+Group
+Tables
+Count
+Core
+branches, staff, customers
+3
+Menu
+categories, products, ingredients, product_ingredients, product_dietary_tags, product_recommendations
+6
+Orders
+orders, order_items, order_item_customisations, order_modifications, order_cancellations
+5
+Operations
+restaurant_tables, delivery_assignments, shifts, cash_drawer_sessions, cash_transactions
+5
+Finance
+expenses, expense_budgets, salary_profiles, salary_records, salary_adjustments, salary_advances
+6
+Inventory
+inventory_items, inventory_transactions, inventory_budgets
+3
+Marketing
+customer_feedback, broadcasts, broadcast_recipients, notification_logs
+4
+Config
+branch_settings, peak_hour_config, demand_forecasts, n8n_webhook_logs
+4
+
+Key Table Relationships
+Parent
+Child Tables
+Link Column
+branches
+staff, categories, orders, tables, inventory_items, expenses, shifts
+branch_id
+categories
+products
+category_id
+products
+product_ingredients, product_dietary_tags, product_recommendations, order_items
+product_id
+orders
+order_items, order_modifications, order_cancellations, delivery_assignments, customer_feedback
+order_id
+order_items
+order_item_customisations
+order_item_id
+staff
+shifts, cash_drawer_sessions, salary_profiles, salary_records
+staff_id
+cash_drawer_sessions
+cash_transactions
+session_id
+salary_records
+salary_adjustments
+salary_record_id
+customers
+orders, broadcast_recipients, customer_feedback
+customer_id
+broadcasts
+broadcast_recipients
+broadcast_id
+
+RLS Policies — Role Matrix
+Har table pe Row Level Security enable hai. Har role ko sirf unka data dikhai deta hai.
+Table / Group
+CEO
+Manager
+Receptionist
+Kitchen
+Delivery Boy
+Public
+orders
+All branches read
+Own branch full
+Own branch full
+Own branch read+update
+Own assigned only
+Insert only (kiosk)
+products/categories
+All read
+Own branch full
+Read only
+Read + toggle stock
+No access
+Read (menu)
+staff
+All branches read
+Own branch full
+Own record only
+Own record only
+Own record only
+No access
+salary_records
+All read
+Own branch full
+No access
+No access
+Own record (slip)
+No access
+expenses
+All read
+Own branch full
+No access
+No access
+No access
+No access
+cash_drawer_sessions
+All read
+Own branch full
+Own branch create
+No access
+No access
+No access
+shifts
+All read
+Own branch full
+No access
+Self update only
+No access
+No access
+delivery_assignments
+All read
+All read
+Own branch read
+No access
+Own only
+No access
+customer_feedback
+All read
+All read
+No access
+No access
+No access
+Insert only
+broadcasts
+All read
+Own branch full
+No access
+No access
+No access
+No access
+
+Supabase Realtime — Live Subscriptions
+Panel
+Subscribes To
+Events
+Receptionist
+orders, restaurant_tables, inventory_items, products
+INSERT, UPDATE
+Kitchen (KDS)
+orders, order_items, products (status changes)
+INSERT, UPDATE
+Delivery Boy
+delivery_assignments
+INSERT, UPDATE
+Manager
+orders (read), inventory_items, peak_hour_config
+UPDATE
+CEO
+No realtime — report snapshots only
+—
+Kiosk
+products (availability toggle from kitchen)
+UPDATE
+
+Important Enums (Custom Types)
+Enum Name
+Values
+order_type
+dine_in, takeaway, delivery, qr_table
+order_source
+kiosk, website, voice_agent, receptionist, qr_code, aggregator
+order_status
+pending_payment, confirmed, preparing, ready, out_for_delivery, delivered, cancelled, refunded
+staff_role
+receptionist, kitchen, delivery_boy, manager, ceo, admin
+salary_structure
+fixed_monthly, hourly, fixed_plus_overtime
+payment_method
+cash, card, cod
+expense_category
+rent, utilities, staff_salaries, raw_materials, packaging, maintenance, other
+dietary_tag
+vegetarian, contains_gluten, contains_dairy, contains_nuts, spicy, halal
+ingredient_role
+default (removable), addon (optional add)
+product_status
+available, out_of_stock, hidden
+
+03
+Component Structure — All 6 Panels
+React.js PWA + React Native + Next.js
+
+Shared Layer (All Panels)
+Module
+Files / Description
+lib/
+supabase.ts (client) • realtime.ts (subscriptions) • api.ts (typed fetchers) • n8n.ts (webhook triggers)
+hooks/
+useAuth.ts • useOrders.ts (realtime) • useProducts.ts (cached) • useOrderETA.ts • useBranch.ts
+stores/ (Zustand)
+authStore • orderStore • cartStore (kiosk/web) • uiStore
+components/ui/
+Button • Badge • Card • Modal • Toast • DataTable • DateRangePicker • StatCard • EmptyState
+types/
+order.ts • product.ts • staff.ts • db.ts (auto-generated from Supabase CLI)
+
+PANEL 1 — CUSTOMER KIOSK
+Device: Tablet (in-restaurant)   |   Auth: None — Public
+EntryScreen  —  Full-screen Dine-In / Takeaway selection. Background slideshow + large touch buttons.
+MenuScreen  —  2-panel layout: CategorySidebar (left) + ProductGrid (right). AllergenFilterBar on top. CartFloatingButton.
+ProductDetailScreen  —  Hero image, IngredientToggleList (defaults removable), AddonList, QuantitySelector, RecommendedItems overlay.
+BeverageSelectionScreen  —  Post-item beverage prompt with BeverageGrid + SkipButton.
+CartScreen  —  CartItemRow x N, CartSummary (subtotal/tax/total PKR), EditItemButton, ConfirmOrderButton.
+PaymentScreen  —  CashInstructions (go to counter) or CardTerminalPrompt (tap/insert). Auto-detects method.
+OrderConfirmScreen  —  OrderNumberDisplay (large #0042), ETADisplay, ThankYouAnimation (Lottie). Auto-reset timer 90s.
+IdleResetTimer  —  Global — resets session to EntryScreen after 90 seconds of inactivity.
+
+PANEL 2 — RECEPTIONIST
+Device: Desktop / Tablet   |   Auth: Staff ID + Password
+ShiftOpeningModal  —  Mandatory on first login — Opening float input. Feeds into cash reconciliation.
+OrderQueuePage  —  Live realtime order list. OrderCard shows #, type badge, source badge, items, total, status, time elapsed.
+OrderDetailDrawer  —  Slide-in panel. Full order + MarkPaidButton, ModifyOrderButton (2-min window), CancelOrderButton.
+TableManagementPage  —  FloorMapCanvas (visual drag-drop). TableNode colour-coded: green=available, red=occupied, yellow=reserved.
+ManualOrderPage  —  Receptionist enters orders manually. Full menu navigation + CustomerInfoForm for delivery orders.
+CashDrawerPage  —  DrawerBalanceDisplay, TransactionForm (cash-in/out + reason), TransactionHistory, ShiftCloseModal.
+SalesDashboardPage  —  Today's live stats: Dine-In / Takeaway / Online / Voice / Grand Total cards.
+ModifyOrderModal  —  Edit items/qty/customisations. After 2-min window: requires ManagerApprovalRequired badge.
+
+PANEL 3 — KITCHEN DISPLAY (KDS)
+Device: Tablet (wall-mounted, always-on)   |   Auth: Staff ID + Password
+KitchenDisplayPage  —  Single always-on screen. Dark high-contrast theme. Large font readable from 2 metres.
+KitchenOrderCard  —  Order#, type badge, Voice Order badge if applicable, ElapsedTimerBadge (red >15min), ItemCheckList.
+KitchenItemRow  —  Checkbox to mark individual items ready. Customisations highlighted in colour.
+MarkOrderReadyButton  —  Full-width CTA. Triggers notification to Receptionist panel and Order Bumper display.
+ItemAvailabilityPanel  —  Side panel — StockToggleRow per item. Toggle = instant update to kiosk, website, manager alert.
+NewOrderAlert  —  Audio beep + screen flash on new order. AudioAlert component with volume control.
+FullscreenGuard  —  Auto re-enters fullscreen if kitchen staff accidentally exits. Prevents panel from being minimised.
+
+PANEL 4 — MANAGER
+Device: Desktop / Tablet   |   Auth: Password + PIN (2-step)
+DashboardPage  —  LiveStatCards, KitchenQueuePreview (read-only), RecentCancellations, PeakHourAlert banner.
+SalesReportsPage  —  DateRangePicker (preset + custom), SalesSummaryCards, RevenueBarChart, CancellationSection, ExportButtons (PDF/Excel).
+StaffManagementPage  —  StaffListTable, Create/Edit/Deactivate modals, StaffDetailDrawer with ShiftLogTable + PerformanceMetrics.
+MenuManagementPage  —  CategoryManager, ProductListTable, ProductFormModal (tabs: Basic / Ingredients / Dietary / Recommendations), AvailabilityToggle.
+ShiftManagementPage  —  WeeklyScheduleCalendar (staff x day grid), AssignShiftModal, AttendanceLogTable, OvertimeSummaryCard.
+SalaryPage  —  SalaryProfilesTable, EditSalaryProfileModal, MonthlyPayrollSheet, SalaryAdjustmentModal (logged), MarkAsPaidModal, SalarySlipPreview.
+ExpenseTrackingPage  —  ExpenseForm (date/category/amount/receipt upload), ExpenseListTable, BudgetVsActualChart, ExportButton.
+FeedbackPage  —  RatingOverviewCards, FeedbackTable, LowRatedItemsAlert (3+ consecutive), GoogleReviewFunnelChart.
+BroadcastPage  —  BroadcastComposer (message + image + audience filter), ScheduleSelector, BroadcastHistoryTable, StatsCard.
+QRCodeManagerPage  —  TableQRList, PrintQRButton. Generates unique QR per table for dine-in mobile ordering.
+
+PANEL 5 — CEO
+Device: Desktop / Mobile   |   Auth: Password + PIN (2-step) — Read Only
+BIDashboardPage  —  GrandTotalCard, RevenueLineChart (daily/weekly/monthly/yearly toggle), RevenueBySourceChart (donut), PeakHoursHeatmap.
+BIDashboardPage (cont.)  —  BestSellingItemsTable, ReturningVsNewCustomers doughnut, UpsellConversionCard, PayrollVsRevenueCard.
+InvoiceDownloadPage  —  DateRangeSelector (9 presets), CustomDatePicker, CustomHourPicker (specific date + time range), InvoicePreview, DownloadPDF/Excel.
+SalaryHistoryPage  —  PayrollSummaryCard, StaffPayrollTable, FlaggedAdjustmentsList (with reason), PayrollTrendChart (year-on-year).
+CancellationsRefundsPage  —  RefundSummaryCards, CancellationReasonsChart, RefundTransactionTable. Read-only.
+DemandForecastPage  —  WeeklyForecastCard, ForecastVsActualChart, ForecastAccuracyBadge. Requires 4 weeks of data to activate.
+ExpensePnLPage  —  RevenueSummaryCard, ExpenseSummaryCard, NetProfitCard — Revenue minus Expenses equals Profit as gauge chart.
+BranchSwitcher  —  Phase 2 — toggle between All Branches / Branch A / Branch B for consolidated or per-branch view.
+
+PANEL 6 — DELIVERY BOY
+Device: Mobile (React Native)   |   Auth: Staff ID + Password
+OrderQueueScreen  —  Active delivery orders only. OrderCard: order#, customer name, address, COD amount. Pull-to-refresh.
+OrderDetailScreen  —  CustomerInfoCard (name + tap-to-WhatsApp + address), ItemsListCard, TotalAmountCard (COD to collect).
+OpenInMapsButton  —  Launches Google Maps with delivery address pre-filled. One tap navigation.
+OutForDeliveryButton  —  Status update. Triggers WhatsApp notification to customer with delivery boy name + ETA.
+MarkDeliveredButton  —  Status update. Triggers Delivered WhatsApp + feedback request. Updates Receptionist panel.
+OfflineIndicator  —  Shows banner when no internet. Orders cached locally until reconnected.
+
+
+04
+N8n Automation Flows
+19 workflows — WhatsApp + Cron + Webhooks
+
+4.1 Order Flow Automations
+Workflow
+Trigger
+Action
+Recipient
+Order Confirmed
+order.status = confirmed
+WhatsApp: order#, items, ETA
+Customer
+Order Ready
+kitchen marks = ready
+WhatsApp: order ready for collection
+Customer (Dine-In/Takeaway)
+Out for Delivery
+delivery_boy updates status
+WhatsApp: delivery boy name + ETA
+Customer
+Delivered Confirmation
+delivery_boy = delivered
+WhatsApp confirmation + feedback link
+Customer
+Voice Agent Bridge
+voice call ends (Twilio webhook)
+Parse order JSON, POST to backend, push to KDS
+Backend + Kitchen
+Website Order Route
+new website order
+POST to backend, WebSocket push to panels
+Receptionist + Kitchen
+Pre-Order Release
+scheduled_time minus 30 min
+Push order to panels + customer reminder
+Receptionist + Kitchen + Customer
+
+4.2 Reporting Automations (Cron-based)
+Workflow
+Schedule
+Action
+Recipient
+Daily Sales Report
+Every day 11:00 PM
+Generate summary, send WhatsApp
+CEO + Manager
+Weekly Summary
+Every Sunday 10:00 PM
+Generate weekly PDF, send WhatsApp
+CEO + Manager
+Monthly Invoice
+Last day of month 11:30 PM
+Auto-generate PDF invoice, WhatsApp
+CEO
+Google Sheets Sync
+Every day 11:05 PM
+Push daily sales row to CEO Google Sheet
+CEO Google Sheet
+Demand Forecast
+Every Monday 8:00 AM
+Generate weekly forecast, send WhatsApp
+Manager + CEO
+
+4.3 Alert Automations
+Workflow
+Trigger
+Action
+Recipient
+Low Stock Alert
+ingredient qty < threshold
+WhatsApp: item name + current stock
+Manager + Kitchen
+Peak Hour Alert
+orders > threshold in 15 min
+WhatsApp: current order volume warning
+Manager
+Cash Discrepancy
+shift close: expected != actual
+WhatsApp: discrepancy amount + staff ID
+Manager + CEO
+Negative Feedback
+customer rating 1-3 stars
+WhatsApp: order details + comment
+Manager
+Item Out of Stock
+kitchen toggles = out of stock
+WhatsApp to Manager + update kiosk/website
+Manager
+Staff Late Arrival
+login > scheduled + 10 min
+WhatsApp: staff name + scheduled vs actual
+Manager
+
+4.4 Marketing & Engagement Automations
+Workflow
+Trigger
+Action
+Recipient
+Google Review Request
+rating = 4 or 5 stars
+Wait 30 min, send WhatsApp with Google Review link
+Customer
+Marketing Broadcast
+manager schedules broadcast
+Send bulk WhatsApp at scheduled time
+Filtered customers
+Win-Back Campaign
+no order in 30 days
+WhatsApp re-engagement message
+Inactive customers
+Opt-Out Handler
+customer replies STOP
+Remove from all broadcast lists, log opt-out
+Customer DB
+Shift Schedule
+manager publishes schedule
+Send each staff their shift via WhatsApp
+All staff
+Salary Slip
+manager marks salary as paid
+Auto-generate PDF slip + send WhatsApp
+Staff member
+
+N8n Deployment Notes
+Self-hosted on Railway free tier — same server as backend
+All 19 workflows version-controlled as JSON in GitHub
+Each workflow has 3-retry logic + failure logging to n8n_webhook_logs table
+Webhook URLs secured with secret token — only backend can trigger
+N8n admin panel restricted to developer/IT admin only
+
+05
+Development Phases
+8 phases from PRD v1.0 — priority order
+
+Phase
+Name
+Deliverables
+Tech Focus
+1
+Core Kiosk + Kitchen
+Customer kiosk, KDS, basic Receptionist panel, KOT printer, Order Bumper display
+Supabase Realtime, WebSockets, ESC/POS printer
+2
+Receptionist Full
+Table management, cash drawer, QR table ordering, order modification window, item availability toggle, allergen filters
+FloorMap canvas, QR generation, 2-min timer
+3
+Manager + CEO Panels
+Reports, staff performance, shift management, expense tracking, cancellations/refunds, peak hour alerts, invoice downloads
+Recharts, PDF generation, date-range queries
+4
+Website + Notifications
+Customer website, online ordering, customer profiles, WhatsApp notifications, dynamic ETA, pre-ordering, AI recommendations
+Next.js, 360dialog API, collaborative filtering
+5
+Voice Agent
+AI voice agent in Urdu, phone order intake, customer profile recognition, routing, WhatsApp confirmations
+Twilio, Anthropic Claude API, Urdu NLP
+6
+Feedback + Marketing
+Customer feedback, Google Reviews integration, WhatsApp marketing broadcasts, demand forecasting
+N8n broadcast flows, PostHog analytics
+7
+Inventory + Advanced
+Stock management module, low-stock alerts, P&L integration with expenses, allergen updates
+Inventory decrement triggers, budget tracking
+8
+QA + Launch
+Full system testing, staff training, multi-branch architecture validation, go-live
+End-to-end testing, Sentry setup, monitoring
+
+Multi-Branch Ready (Day 1)
+Sab tables mein branch_id column hai. Phase 1 se hi data segregated hai. Phase 2 mein CEO panel mein branch switcher aayega. Staff accounts branch-tied hain. Menu shared ya per-branch customize ho sakta hai. Koi extra development cost nahi.
+
+06
+WhatsApp Communication Strategy
+360dialog — All notifications, zero email, zero SMS
+
+Why WhatsApp Only — Pakistan Context
+Channel
+Pakistan Adoption
+Reliability
+Media Support
+Two-Way
+Cost
+WhatsApp
+95%+ smartphone users
+Very High
+PDF, images, video
+Yes
+~$5/month flat
+SMS
+Universal but declining
+Medium (carrier delays)
+Text only
+Limited
+Per-message PKR charge
+Email
+Low for general public
+High
+Full
+Yes
+Free but ignored
+
+360dialog vs Twilio Comparison
+Factor
+360dialog
+Twilio WhatsApp
+Meta Partnership
+Direct Meta partner
+Reseller
+Monthly Cost
+~$5 flat fee
+$0 + per-message billing
+Per Message (outbound)
+Very low
+~$0.005-0.008 USD
+Setup Time
+2-3 days
+1-2 weeks
+N8n Integration
+Native HTTP node
+Native Twilio node
+Pakistan Support
+Works fine
+Works fine
+Verdict
+SELECTED
+Alternative (more expensive at scale)
+
+WhatsApp Message Types Used
+Message Type
+When Sent
+Content
+Order Confirmed
+Order status = confirmed
+Order#, items list, estimated ready time
+Order Ready
+Kitchen marks ready
+Order ready for collection / being served
+Out for Delivery
+Delivery boy taps button
+Delivery boy name + estimated arrival
+Delivered
+Delivery boy marks delivered
+Confirmation + feedback link
+Feedback Request
+Order delivered
+1-5 star rating request + comment link
+Google Review
+Rating 4-5 stars (30 min delay)
+Thank you + Google Review direct link
+Salary Slip
+Manager marks salary paid
+PDF slip attachment
+Shift Schedule
+Manager publishes schedule
+Staff's shift for the week
+Low Stock Alert
+Ingredient below threshold
+Item name + current quantity
+Cash Discrepancy
+Shift close mismatch
+Expected vs actual + staff name
+Peak Hour Alert
+Orders > threshold in 15 min
+Volume warning + suggestion
+Marketing Broadcast
+Manager schedules
+Promotional message + optional image
+Win-Back Campaign
+No order in 30 days
+Re-engagement promotional message
+
+07
+Cost Summary
+Monthly + Annual breakdown — all services
+
+Service
+Plan
+Monthly Cost
+Annual Cost
+Notes
+Supabase
+Free tier
+$0
+$0
+500MB DB, 1GB storage, 50k MAU
+Vercel
+Hobby (Free)
+$0
+$0
+100GB bandwidth, unlimited deployments
+Cloudflare
+Free
+$0
+$0
+DNS + SSL + CDN
+GitHub
+Free
+$0
+$0
+Unlimited private repos
+N8n
+Self-hosted on Railway
+$0
+$0
+Railway free tier: 500 hours/month
+Upstash Redis
+Free tier
+$0
+$0
+10,000 commands/day
+Sentry
+Developer (Free)
+$0
+$0
+5,000 errors/month
+PostHog
+Free tier
+$0
+$0
+1M events/month
+360dialog (WhatsApp)
+Starter
+~$5
+~$60
+WhatsApp Business API access
+Namecheap (Domain)
+1 year
+$1
+$12
+Paid annually
+Anthropic Claude API
+Phase 5 (Voice Agent)
+~$10-30
+~$120-360
+Pay per token, depends on call volume
+Safepay (Phase 2)
+Per transaction
+Variable
+Variable
+2.5% per card transaction
+
+TOTAL MONTHLY (Phase 1-4, before payments)
+~$6/mo
+~$72/yr
+
+Note: Supabase free tier kaafi hai ek single-branch restaurant ke liye. Agar data 500MB se zyada ho ya traffic badhe to Pro plan $25/month mein upgrade karna hoga. Vercel bhi free tier pe production traffic handle kar leta hai.
+
+This document covers the complete technical plan for the Restaurant Management System.
+Schema SQL file and detailed component structure files are available separately.
+Living document — update as requirements evolve.
